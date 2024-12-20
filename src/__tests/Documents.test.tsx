@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
-import { screen, render } from "@testing-library/react";
+import { screen, render, fireEvent } from "@testing-library/react";
 import Documents from "../components/Documents";
 
 describe.only("sorts the documents", () => {
@@ -10,12 +10,15 @@ describe.only("sorts the documents", () => {
     render(<Documents />);
   });
 
-  it.only("displays a list of the documents", () => {
+  it("displays a list of the documents", () => {
     expect(screen.getByTestId("doc-list-container")).toBeInTheDocument();
   });
 
   it("by name", () => {
-    throw new Error();
+    fireEvent.click(screen.getByTestId("thead-name"));
+    expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
+      "Cost centres"
+    );
   });
 
   it("by size", () => {

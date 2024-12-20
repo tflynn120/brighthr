@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import data from "../jsonData/data.json";
 
 export type docType = {
@@ -40,54 +40,48 @@ const DocumentFilter = () => {
 };
 
 const Documents = () => {
-  const documentData = data;
+  const [order, setOrder] = useState("order");
+  const [documentData, setDocumentData] = useState(data);
   // const documentData = data;
 
-  const sortByName = () => {
-    documentData.sort(function (a, b) {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
+  const sortByName = (column: string) => {
+    if (order !== "name") {
+      const sorted = [...data].sort((a: any, b: any) =>
+        a[column].toLocaleLowerCase() > b[column].toLocaleLowerCase() ? 1 : -1
+      );
+      setDocumentData(sorted);
+    }
   };
 
   console.log(documentData);
 
   return (
-    <div className="p-10 flex justify-center bg-gray-50 min-h-screen w-full">
-      <div className="w-full ">
-        <h1 className="p-4 pl-0">Documents</h1>
-        <DocumentFilter />
-        <div className="grid grid-cols-12" data-testid="doc-list-container">
-          <div className="col-start-1 col-end-6 border-b-4">
-            <p className="text-xl">Title:</p>
-          </div>
-          <div className="col-start-6 col-end-11 border-b-4">
-            <p className="text-xl">Type:</p>
-          </div>
-
-          <div className="col-start-11 col-end-13 border-b-4">
-            <p className="text-xl">Date:</p>
-          </div>
-          {documentData.map((doc) => (
-            <>
-              <div className="col-start-1 col-end-6 border-b-4">
-                <p>{doc.name}</p>
-              </div>
-              <div className="col-start-6 col-end-11 border-b-4">
-                <p>{doc.type}</p>
-              </div>
-              <div className="col-start-11 col-end-13 border-b-4">
-                <p>{doc.added ? doc.added : "N/A"}</p>
-              </div>
-            </>
+    <div className="p-10 justify-center bg-gray-50 min-h-screen w-full">
+      <h1 className="p-4 pl-0">Documents</h1>
+      <DocumentFilter />
+      <table
+        data-testid="doc-list-container"
+        className="table-auto table text-left"
+      >
+        <thead className="p-1">
+          <tr>
+            <th data-testid="thead-name" onClick={() => sortByName("name")}>
+              Name
+            </th>
+            <th>Type</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {documentData.map((docItem, index) => (
+            <tr data-testid={`documents-table-row-${index}`} key={index}>
+              <td className="p-1">{docItem.name}</td>
+              <td className="p-1">{docItem.type}</td>
+              <td className="p-1">{docItem.added ? docItem.added : "N/A"}</td>
+            </tr>
           ))}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   );
 };
