@@ -19,38 +19,39 @@ type documentType = {
   }[];
 }[];
 
-const DocumentFilter = () => {
-  const [filterValue, setFilterValue] = useState("");
-
-  const handleChange = (e: any) => {
-    console.log("handle change ran");
-    setFilterValue(e.target.value);
-  };
-
+const SvgArrowDown = () => {
   return (
-    <div>
-      <label>Filter: </label>
-      <select value={filterValue} onChange={handleChange}>
-        <option value="file">File type</option>
-        <option value="name">Name</option>
-        <option value="date">Date added</option>
-      </select>
-    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-4 inline-flex"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m19.5 8.25-7.5 7.5-7.5-7.5"
+      />
+    </svg>
   );
 };
 
 const Documents = () => {
-  const [order, setOrder] = useState("order");
+  const [order, setOrder] = useState<string>("");
   const [documentData, setDocumentData] = useState(data);
   // const documentData = data;
 
-  const sortByName = (column: string) => {
-    if (order !== "name") {
-      const sorted = [...data].sort((a: any, b: any) =>
-        a[column].toLocaleLowerCase() > b[column].toLocaleLowerCase() ? 1 : -1
-      );
-      setDocumentData(sorted);
-    }
+  const sortColumnByName = (columnName: string) => {
+    // if (order !== "name") {
+    const sorted = [...data].sort((a: any, b: any) =>
+      a[columnName].toLocaleLowerCase() > b[columnName].toLocaleLowerCase()
+        ? 1
+        : -1
+    );
+    setDocumentData(sorted);
+    setOrder(columnName);
   };
 
   console.log(documentData);
@@ -58,18 +59,27 @@ const Documents = () => {
   return (
     <div className="p-10 justify-center bg-gray-50 min-h-screen w-full">
       <h1 className="p-4 pl-0">Documents</h1>
-      <DocumentFilter />
       <table
         data-testid="doc-list-container"
         className="table-auto table text-left"
       >
         <thead className="p-1">
           <tr>
-            <th data-testid="thead-name" onClick={() => sortByName("name")}>
+            <th
+              data-testid="thead-name"
+              onClick={() => sortColumnByName("name")}
+            >
               Name
+              {order === "name" && <SvgArrowDown />}
             </th>
-            <th>Type</th>
-            <th>Date</th>
+            <th
+              data-testid="thead-type"
+              onClick={() => sortColumnByName("type")}
+            >
+              Type
+              {order === "type" && <SvgArrowDown />}
+            </th>
+            <th data-testid="thead-date">Date</th>
           </tr>
         </thead>
         <tbody>

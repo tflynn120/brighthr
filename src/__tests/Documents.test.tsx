@@ -21,8 +21,11 @@ describe.only("sorts the documents", () => {
     );
   });
 
-  it("by size", () => {
-    throw new Error();
+  it("by type", () => {
+    fireEvent.click(screen.getByTestId("thead-type"));
+    expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
+      "csv"
+    );
   });
 
   it("by date", () => {
