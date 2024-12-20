@@ -1,14 +1,14 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import Documents from "./components/Documents";
+import data from "./jsonData/data.json";
 
 function App() {
+  console.log(data);
   return (
     <>
-      <div></div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div className="ml-20 mr-20 lg:max-w-screen-xl">
+        <h1>Documents</h1>
+        <Documents />
+      </div>
     </>
   );
 }
