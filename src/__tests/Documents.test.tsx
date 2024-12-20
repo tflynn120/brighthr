@@ -2,10 +2,16 @@
  * @jest-environment jsdom
  */
 import "@testing-library/jest-dom";
+import { screen, render } from "@testing-library/react";
+import Documents from "../components/Documents";
 
-describe("sorts the documents", () => {
+describe.only("sorts the documents", () => {
   beforeEach(() => {
-    // setup
+    render(<Documents />);
+  });
+
+  it.only("displays a list of the documents", () => {
+    expect(screen.getByTestId("doc-list-container")).toBeInTheDocument();
   });
 
   it("by name", () => {
