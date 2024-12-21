@@ -1,5 +1,7 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useState } from "react";
 import data from "../jsonData/data.json";
+import SvgArrowDown from "./SvgArrowsDown";
+import SvgArrowUp from "./SvgArrowsUp";
 
 type File = {
   type: string;
@@ -8,35 +10,16 @@ type File = {
   files?: File[];
 };
 
-const SvgArrowDown = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="size-4 inline-flex"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m19.5 8.25-7.5 7.5-7.5-7.5"
-      />
-    </svg>
-  );
-};
-
 const Documents = () => {
-  const [documentData, setDocumentData] = useState<File[]>(data);
-  const [sortColumn, setSortColumn] = useState("");
-  const [sortOrder, setSortOrder] = useState(true); // true = ascending, false = descending
+  const [currentDocuments, setCurrentDocuments] = useState<File[]>(data);
+  const [currentSorted, setCurrentSorted] = useState("");
+  const [sortOrder, setSortOrder] = useState(false); // true = ascending, false = descending
   const [currentFilter, setCurrentFilter] = useState<string>("");
-
-  const sortedItems = [...documentData].sort((a, b) => {
-    if (sortColumn) {
-      const aValue = a[sortColumn as keyof File] || "";
-      const bValue = b[sortColumn as keyof File] || "";
+  console.log(sortOrder);
+  const sortedItems = [...currentDocuments].sort((a, b) => {
+    if (currentSorted) {
+      const aValue = a[currentSorted as keyof File] || "";
+      const bValue = b[currentSorted as keyof File] || "";
       if (aValue < bValue) return sortOrder ? -1 : 1;
       if (aValue > bValue) return sortOrder ? 1 : -1;
     }
@@ -44,15 +27,35 @@ const Documents = () => {
   });
 
   const handleSort = (field: string) => {
-    setSortColumn(field);
-    setSortOrder(sortColumn === field ? !sortOrder : true);
+    setCurrentSorted(field);
+    setSortOrder(currentSorted === field ? !sortOrder : true);
   };
 
   const filteredDocuments = sortedItems.filter((item) =>
     item.name.toLowerCase().includes(currentFilter.toLowerCase())
   );
 
-  console.log(documentData);
+  console.log(currentSorted);
+
+  type RenderSvgIcon = {
+    header: string;
+    currentSorted: string;
+    sortOrder: boolean;
+  };
+
+  const RenderSvgIcon: React.FC<RenderSvgIcon> = ({
+    header,
+    currentSorted,
+    sortOrder,
+  }) => {
+    if (currentSorted === header)
+      if (sortOrder === true) {
+        return <SvgArrowDown />;
+      } else if (sortOrder === false) {
+        return <SvgArrowUp />;
+      }
+    return;
+  };
 
   return (
     <div className="p-10 justify-center bg-gray-50 min-h-screen w-full">
@@ -65,14 +68,27 @@ const Documents = () => {
           <tr>
             <th data-testid="thead-name" onClick={() => handleSort("name")}>
               Name
-              {currentFilter === "name" && <SvgArrowDown />}
+              <RenderSvgIcon
+                header="name"
+                currentSorted={currentSorted}
+                sortOrder={sortOrder}
+              />
             </th>
             <th data-testid="thead-type" onClick={() => handleSort("type")}>
               Type
-              {currentFilter === "type" && <SvgArrowDown />}
+              <RenderSvgIcon
+                header="type"
+                currentSorted={currentSorted}
+                sortOrder={sortOrder}
+              />
             </th>
             <th data-testid="thead-date" onClick={() => handleSort("added")}>
               Date
+              <RenderSvgIcon
+                header="added"
+                currentSorted={currentSorted}
+                sortOrder={sortOrder}
+              />
             </th>
           </tr>
         </thead>
