@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import data from "../jsonData/data.json";
-import SvgArrowDown from "./SvgArrowsDown";
-import SvgArrowUp from "./SvgArrowsUp";
+import { SvgArrowDown, SvgArrowLeft, SvgArrowUp } from "./SvgArrows";
 
 type File = {
   type: string;
@@ -43,8 +42,6 @@ const Documents = () => {
     item.name.toLowerCase().includes(currentFilter.toLowerCase())
   );
 
-  console.log(currentSorted);
-
   const RenderSvgIcon: React.FC<RenderSvgIcon> = ({
     header,
     currentSorted,
@@ -76,21 +73,29 @@ const Documents = () => {
   return (
     <div className="p-10 justify-center bg-gray-50 min-h-screen w-full">
       <h1 className="p-4 pl-0">Documents</h1>
-      {isFolderOpen && (
-        <>
-          <button onClick={closeFolder}>Back to documents</button>
-          <h2>
-            Viewing folder: <strong>{currentFolderName}</strong>{" "}
-          </h2>
-        </>
-      )}
       <div className="mb-3">
         <input
+          value={currentFilter}
+          name="documents-search-bar"
+          onChange={(e) => setCurrentFilter(e.target.value)}
           type="search"
-          className="p4 w-full bg-gray-300"
+          className="p4 w-full bg-gray-300 border-none"
           data-testid="documents-search-bar"
         />
       </div>
+      {isFolderOpen && (
+        <>
+          <button onClick={closeFolder}>
+            <SvgArrowLeft />
+            Back to documents
+          </button>
+          <div>
+            <span>
+              Viewing folder: <strong>{currentFolderName}</strong>{" "}
+            </span>
+          </div>
+        </>
+      )}
       <table
         data-testid="documents-table"
         className="table-auto table text-left"
@@ -133,12 +138,14 @@ const Documents = () => {
                   {document.added ? document.added : "N/A"}
                 </td>
                 {document.type === "folder" && (
-                  <button
-                    data-testid={`documents-table-row-folder-button-${document.name}`}
-                    onClick={() => openFolder(document)}
-                  >
-                    Open Folder
-                  </button>
+                  <td>
+                    <button
+                      data-testid={`documents-table-row-folder-button-${document.name}`}
+                      onClick={() => openFolder(document)}
+                    >
+                      Open Folder
+                    </button>
+                  </td>
                 )}
                 <td></td>
               </tr>
