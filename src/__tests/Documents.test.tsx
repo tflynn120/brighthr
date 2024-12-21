@@ -14,6 +14,12 @@ describe.only("sort document functionality", () => {
     expect(screen.getByTestId("doc-list-container")).toBeInTheDocument();
   });
 
+  it("does not sort by name until click of name header", () => {
+    expect(screen.getByTestId("documents-table-row-0")).not.toHaveTextContent(
+      "Cost centres"
+    );
+  });
+
   it("sorts by name on click of name header", () => {
     fireEvent.click(screen.getByTestId("thead-name"));
     expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
@@ -21,10 +27,22 @@ describe.only("sort document functionality", () => {
     );
   });
 
+  it("does not sort by type until click of type header", () => {
+    expect(screen.getByTestId("documents-table-row-0")).not.toHaveTextContent(
+      "csv"
+    );
+  });
+
   it("sorts by type on click of type header", () => {
     fireEvent.click(screen.getByTestId("thead-type"));
     expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
       "csv"
+    );
+  });
+
+  it("does not sort by date until click of date header", () => {
+    expect(screen.getByTestId("documents-table-row-0")).not.toHaveTextContent(
+      "N/A"
     );
   });
 
