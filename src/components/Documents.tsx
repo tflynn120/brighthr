@@ -84,6 +84,13 @@ const Documents = () => {
           </h2>
         </>
       )}
+      <div className="mb-3">
+        <input
+          type="search"
+          className="p4 w-full bg-gray-300"
+          data-testid="documents-search-bar"
+        />
+      </div>
       <table
         data-testid="documents-table"
         className="table-auto table text-left"

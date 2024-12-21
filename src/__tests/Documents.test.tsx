@@ -78,8 +78,12 @@ describe("showing files within folders", () => {
 
 describe("Filter by filename", () => {
   beforeEach(() => {
-    // setup
+    render(<App />);
   });
+  it("renders the search bar", () => {
+    expect(screen.getByTestId("documents-search-bar")).toBeInTheDocument();
+  });
+
   it("does not find a document when no document contains the search value", () => {
     throw new Error();
   });
