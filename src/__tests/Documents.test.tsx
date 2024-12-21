@@ -3,15 +3,15 @@
  */
 import "@testing-library/jest-dom";
 import { screen, render, fireEvent } from "@testing-library/react";
-import Documents from "../components/Documents";
+import App from "../App";
 
-describe.only("sort document functionality", () => {
+describe("sort document functionality", () => {
   beforeEach(() => {
-    render(<Documents />);
+    render(<App />);
   });
 
   it("displays a list of the documents", () => {
-    expect(screen.getByTestId("doc-list-container")).toBeInTheDocument();
+    expect(screen.getByTestId("documents-table")).toBeInTheDocument();
   });
 
   it("does not sort by name until click of name header", () => {
@@ -54,6 +54,28 @@ describe.only("sort document functionality", () => {
   });
 });
 
+describe("showing files within folders", () => {
+  beforeEach(() => {
+    render(<App />);
+  });
+
+  it("does not show documents within the folder", () => {
+    expect(screen.getByTestId("documents-table")).not.toHaveTextContent(
+      "Fuel allowances"
+    );
+  });
+
+  it("show documents within the folder", () => {
+    fireEvent.click(
+      screen.getByTestId("documents-table-row-folder-button-Expenses")
+    );
+
+    expect(screen.getByTestId("documents-table")).toHaveTextContent(
+      "Fuel allowances"
+    );
+  });
+});
+
 describe("Filter by filename", () => {
   beforeEach(() => {
     // setup
@@ -63,16 +85,6 @@ describe("Filter by filename", () => {
   });
 
   it("finds a document containing the search value", () => {
-    throw new Error();
-  });
-});
-
-describe("clicking on individual documents", () => {
-  beforeEach(() => {
-    // setup
-  });
-
-  it("shows the correct documents details", () => {
     throw new Error();
   });
 });

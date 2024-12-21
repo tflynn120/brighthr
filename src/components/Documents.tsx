@@ -10,12 +10,20 @@ type File = {
   files?: File[];
 };
 
+type RenderSvgIcon = {
+  header: string;
+  currentSorted: string;
+  sortOrder: boolean;
+};
+
 const Documents = () => {
   const [currentDocuments, setCurrentDocuments] = useState<File[]>(data);
   const [currentSorted, setCurrentSorted] = useState("");
   const [sortOrder, setSortOrder] = useState(false); // true = ascending, false = descending
   const [currentFilter, setCurrentFilter] = useState<string>("");
-  console.log(sortOrder);
+  const [isFolderOpen, setIsFolderOpen] = useState<boolean>(false);
+  const [currentFolderName, setCurrentFolderName] = useState<string>("");
+
   const sortedItems = [...currentDocuments].sort((a, b) => {
     if (currentSorted) {
       const aValue = a[currentSorted as keyof File] || "";
@@ -37,12 +45,6 @@ const Documents = () => {
 
   console.log(currentSorted);
 
-  type RenderSvgIcon = {
-    header: string;
-    currentSorted: string;
-    sortOrder: boolean;
-  };
-
   const RenderSvgIcon: React.FC<RenderSvgIcon> = ({
     header,
     currentSorted,
@@ -57,11 +59,33 @@ const Documents = () => {
     return;
   };
 
+  const openFolder = (folder: File) => {
+    if (folder.files) {
+      setCurrentDocuments(folder.files);
+      setCurrentFolderName(folder.name);
+      setIsFolderOpen(true);
+    }
+  };
+
+  const closeFolder = () => {
+    setIsFolderOpen(false);
+    setCurrentFolderName("");
+    setCurrentDocuments(data);
+  };
+
   return (
     <div className="p-10 justify-center bg-gray-50 min-h-screen w-full">
       <h1 className="p-4 pl-0">Documents</h1>
+      {isFolderOpen && (
+        <>
+          <button onClick={closeFolder}>Back to documents</button>
+          <h2>
+            Viewing folder: <strong>{currentFolderName}</strong>{" "}
+          </h2>
+        </>
+      )}
       <table
-        data-testid="doc-list-container"
+        data-testid="documents-table"
         className="table-auto table text-left"
       >
         <thead className="p-1">
@@ -93,12 +117,25 @@ const Documents = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredDocuments.map((docItem, index) => (
-            <tr data-testid={`documents-table-row-${index}`} key={index}>
-              <td className="p-1">{docItem.name}</td>
-              <td className="p-1">{docItem.type}</td>
-              <td className="p-1">{docItem.added ? docItem.added : "N/A"}</td>
-            </tr>
+          {filteredDocuments.map((document, index) => (
+            <>
+              <tr data-testid={`documents-table-row-${index}`} key={index}>
+                <td className="p-1">{document.name}</td>
+                <td className="p-1">{document.type}</td>
+                <td className="p-1">
+                  {document.added ? document.added : "N/A"}
+                </td>
+                {document.type === "folder" && (
+                  <button
+                    data-testid={`documents-table-row-folder-button-${document.name}`}
+                    onClick={() => openFolder(document)}
+                  >
+                    Open Folder
+                  </button>
+                )}
+                <td></td>
+              </tr>
+            </>
           ))}
         </tbody>
       </table>
