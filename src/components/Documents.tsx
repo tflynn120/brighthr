@@ -1,23 +1,12 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import data from "../jsonData/data.json";
 
-export type docType = {
-  type: string;
-  name: string;
-  added?: Date;
-  files?: docType[];
-};
-
-type documentType = {
+type File = {
   type: string;
   name: string;
   added?: string;
-  files?: {
-    type: string;
-    name: string;
-    added: string;
-  }[];
-}[];
+  files?: File[];
+};
 
 const SvgArrowDown = () => {
   return (
@@ -39,20 +28,29 @@ const SvgArrowDown = () => {
 };
 
 const Documents = () => {
-  const [order, setOrder] = useState<string>("");
-  const [documentData, setDocumentData] = useState(data);
-  // const documentData = data;
+  const [documentData, setDocumentData] = useState<File[]>(data);
+  const [sortColumn, setSortColumn] = useState("");
+  const [sortOrder, setSortOrder] = useState(true); // true = ascending, false = descending
+  const [currentFilter, setCurrentFilter] = useState<string>("");
 
-  const sortColumnByName = (columnName: string) => {
-    // if (order !== "name") {
-    const sorted = [...data].sort((a: any, b: any) =>
-      a[columnName].toLocaleLowerCase() > b[columnName].toLocaleLowerCase()
-        ? 1
-        : -1
-    );
-    setDocumentData(sorted);
-    setOrder(columnName);
+  const sortedItems = [...documentData].sort((a, b) => {
+    if (sortColumn) {
+      const aValue = a[sortColumn as keyof File] || "";
+      const bValue = b[sortColumn as keyof File] || "";
+      if (aValue < bValue) return sortOrder ? -1 : 1;
+      if (aValue > bValue) return sortOrder ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const handleSort = (field: string) => {
+    setSortColumn(field);
+    setSortOrder(sortColumn === field ? !sortOrder : true);
   };
+
+  const filteredDocuments = sortedItems.filter((item) =>
+    item.name.toLowerCase().includes(currentFilter.toLowerCase())
+  );
 
   console.log(documentData);
 
@@ -65,25 +63,21 @@ const Documents = () => {
       >
         <thead className="p-1">
           <tr>
-            <th
-              data-testid="thead-name"
-              onClick={() => sortColumnByName("name")}
-            >
+            <th data-testid="thead-name" onClick={() => handleSort("name")}>
               Name
-              {order === "name" && <SvgArrowDown />}
+              {currentFilter === "name" && <SvgArrowDown />}
             </th>
-            <th
-              data-testid="thead-type"
-              onClick={() => sortColumnByName("type")}
-            >
+            <th data-testid="thead-type" onClick={() => handleSort("type")}>
               Type
-              {order === "type" && <SvgArrowDown />}
+              {currentFilter === "type" && <SvgArrowDown />}
             </th>
-            <th data-testid="thead-date">Date</th>
+            <th data-testid="thead-date" onClick={() => handleSort("added")}>
+              Date
+            </th>
           </tr>
         </thead>
         <tbody>
-          {documentData.map((docItem, index) => (
+          {filteredDocuments.map((docItem, index) => (
             <tr data-testid={`documents-table-row-${index}`} key={index}>
               <td className="p-1">{docItem.name}</td>
               <td className="p-1">{docItem.type}</td>

@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import { screen, render, fireEvent } from "@testing-library/react";
 import Documents from "../components/Documents";
 
-describe.only("sorts the documents", () => {
+describe.only("sort document functionality", () => {
   beforeEach(() => {
     render(<Documents />);
   });
@@ -14,14 +14,14 @@ describe.only("sorts the documents", () => {
     expect(screen.getByTestId("doc-list-container")).toBeInTheDocument();
   });
 
-  it("by name", () => {
+  it("sorts by name on click of name header", () => {
     fireEvent.click(screen.getByTestId("thead-name"));
     expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
       "Cost centres"
     );
   });
 
-  it("by type", () => {
+  it("sorts by type on click of type header", () => {
     fireEvent.click(screen.getByTestId("thead-type"));
     expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
       "csv"
@@ -29,7 +29,10 @@ describe.only("sorts the documents", () => {
   });
 
   it("by date", () => {
-    throw new Error();
+    fireEvent.click(screen.getByTestId("thead-date"));
+    expect(screen.getByTestId("documents-table-row-0")).toHaveTextContent(
+      "N/A"
+    );
   });
 });
 
